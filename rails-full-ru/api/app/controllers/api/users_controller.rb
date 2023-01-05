@@ -7,6 +7,7 @@ class Api::UsersController < Api::ApplicationController
 
     respond_with @users
   end
+  
   def show
     @user = User.find(params[:id])
 
