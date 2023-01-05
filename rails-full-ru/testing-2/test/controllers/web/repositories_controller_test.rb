@@ -12,7 +12,6 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
   
   test 'should_create' do
-
     stub_api('AlfieJones/theme-toggles')
     repository = repositories(:one)
 
