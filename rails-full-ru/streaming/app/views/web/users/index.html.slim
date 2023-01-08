@@ -4,7 +4,7 @@
 .mb-2
   = link_to t('.normal_csv'), normal_csv_users_path(format: :csv), class: 'btn btn-primary'
 .mb-2
-  = link_to t('.stream_csv'), stream_csv_users_path(format: :csv), class: 'btn btn-primary'
+  = link_to t('.stream_csv'), stream_csv_users_path, class: 'btn btn-primary'
 
 = paginate @users, theme: 'bootstrap-5'
 

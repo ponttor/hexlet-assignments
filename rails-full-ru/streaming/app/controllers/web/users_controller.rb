@@ -62,20 +62,13 @@ class Web::UsersController < Web::ApplicationController
 
   # BEGIN
   def stream_csv
-    respond_to do |format|
-      format.csv do
-        response.headers['Content_Length'] = 'text/event-stream'
-        response.headers['Last-Modified'] = Time.current.httpdate
-        response.headers['Content-Disposition'] = 'attachment; filename="stream_user.csv"'
-        
-        response.stream.write User.column_names.to_csv
+    response.headers['Last-Modified'] = Time.now.httpdate.to_s
 
-        User.all.find_each do |record|
-          response.stream.write record.attributes.values_at(*User.column_names).to_csv
-        end
+    send_stream(filename: 'users.csv') do |stream|
+      stream.write 'id,name,email,created_at,updated_at\n'
 
-        ensure
-          response.stream.close
+      User.find_each do |user|
+        stream.write "#{user.id},#{user.name},#{user.email},#{user.created_at},#{user.updated_at}\n"
       end
     end
   end
