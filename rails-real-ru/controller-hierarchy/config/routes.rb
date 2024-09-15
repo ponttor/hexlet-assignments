@@ -7,8 +7,8 @@ Rails.application.routes.draw do
     resources :movies do
       # BEGIN
       scope module: :movies do
-        resources :comments, only: %i[index new create edit update destroy]
-        resources :reviews, only: %i[index new create edit update destroy]
+        resources :reviews, except: %i[show]
+        resources :comments, except: %i[show]
       end
       # END
     end

@@ -1,52 +1,51 @@
 # frozen_string_literal: true
 
-module Web
-  class Movies::CommentsController < Web::Movies::ApplicationController
-    def index
-      @comments = resource_movie.comments
+class Web::Movies::CommentsController < Web::Movies::ApplicationController
+  def index
+    @comments = resource_movie.comments.order(id: :desc)
+  end
+
+  def new
+    @comment = resource_movie.comments.new
+  end
+
+  def edit
+    @comment = resource_movie.comments.find params[:id]
+  end
+
+  def create
+    @comment = resource_movie.comments.new(permitted_comment_params)
+
+    if @comment.save
+      redirect_to movie_comments_path, notice: t('success')
+    else
+      flash[:alert] = t('fail')
+      render :new, status: :unprocessable_entity
     end
+  end
 
-    def new
-      @comment = resource_movie.comments.build
+  def update
+    @comment = resource_movie.comments.find params[:id]
+
+    if @comment.update(permitted_comment_params)
+      redirect_to movie_comments_path, notice: t('success')
+    else
+      flash[:alert] = t('fail')
+      render :edit, status: :unprocessable_entity
     end
+  end
 
-    def create
-      @comment = resource_movie.comments.build(comment_params)
+  def destroy
+    @comment = resource_movie.comments.find params[:id]
 
-      if @comment.save
-        redirect_to movie_comments_url(resource_movie), notice: 'Comment was successfully created.'
-      else
-        render :new, status: :unprocessable_entity
-      end
-    end
+    @comment&.destroy!
 
-    def edit
-      @comment = comment
-    end
+    redirect_to movie_comments_path, notice: t('success')
+  end
 
-    def update
-      @comment = comment
-      if @comment.update(comment_params)
-        redirect_to movie_comments_url(resource_movie), notice: 'Comment was successfully updated.'
-      else
-        render :edit, status: :unprocessable_entity
-      end
-    end
+  private
 
-    def destroy
-      @comment = comment
-      @comment.destroy
-      redirect_to movie_comments_url(resource_movie), notice: 'Comment was successfully deleted.'
-    end
-
-    private
-
-    def comment
-      resource_movie.comments.find(params[:id])
-    end
-
-    def comment_params
-      params.require(:comment).permit(:body)
-    end
+  def permitted_comment_params
+    params[:comment].permit(:body)
   end
 end
