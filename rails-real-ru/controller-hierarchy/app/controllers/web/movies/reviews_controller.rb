@@ -41,10 +41,6 @@ module Web
 
     private
 
-    def resource_movie
-      @resource_movie ||= Movie.find(params[:movie_id])
-    end
-
     def review
       resource_movie.reviews.find(params[:id])
     end
