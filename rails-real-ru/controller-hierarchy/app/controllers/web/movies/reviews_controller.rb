@@ -50,7 +50,7 @@ module Web
     end
 
     def review_params
-      params.require(:review).permit(:body, :movie_id)
+      params.require(:review).permit(:body)
     end
   end
 end

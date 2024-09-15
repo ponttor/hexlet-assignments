@@ -46,7 +46,7 @@ module Web
     end
 
     def comment_params
-      params.require(:comment).permit(:body, :movie_id)
+      params.require(:comment).permit(:body)
     end
   end
 end
