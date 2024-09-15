@@ -21,26 +21,25 @@ class VacanciesController < ApplicationController
   end
 
   # BEGIN
-  def archive
-    @vacancy = Vacancy.find params[:id]
-    if @vacancy.archive!
-      redirect_to vacancies_url, notice: 'Vacancy was successfully archived'
-    else
-      redirect_to root_url, notice: 'Vacancy was not archived'
-    end
-  end
-
   def publish
     @vacancy = Vacancy.find params[:id]
 
-    if @vacancy.archived?
-      redirect_to vacancies_url, notice: 'Cannot publish an archived vacancy.'
+    if @vacancy.publish!
+      redirect_to vacancies_path, notice: 'Vacancy was successfully published.'
     else
-      @vacancy.publish!
-      redirect_to vacancies_url, notice: 'Vacancy was successfully published.'
+      redirect_to vacancies_path, alert: 'Vacancy was not published.'
     end
   end
 
+  def archive
+    @vacancy = Vacancy.find params[:id]
+
+    if @vacancy.archive!
+      redirect_to vacancies_path, notice: 'Vacancy was successfully archived.'
+    else
+      redirect_to vacancies_path, alert: 'Vacancy was not archived.'
+    end
+  end
   # END
 
   private
