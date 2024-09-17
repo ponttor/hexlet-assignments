@@ -6,33 +6,44 @@ class Hacker
   class << self
     def hack(email, password)
       # BEGIN
-      registration_uri = URI('https://rails-collective-blog-ru.hexlet.app/users/sign_up')
-      submitting_uri = URI('https://rails-collective-blog-ru.hexlet.app/users')
+      hostname = 'https://rails-collective-blog-ru.hexlet.app/'
+      reg_page_path = 'users/sign_up'
+      reg_action_path = 'users'
 
-      response = Net::HTTP.get_response(registration_uri)
-      cookie = response['set-cookie'].split('; ')[0]
-      html = Nokogiri::HTML(response.body)
+      uri = URI(hostname)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = uri.scheme == 'https'
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      authenticity_token = html.at('input[@name="authenticity_token"]')
-      request_body = { 
-        'authenticity_token' => authenticity_token['value'],
-        'user[email]' => email,
-        'user[password]' => password,
-        'user[password_confirmation]' => password
+      request = Net::HTTP::Get.new URI.join(hostname, reg_page_path)
+
+      response = http.request request
+
+      cookie = response.response['set-cookie'].split('; ')[0]
+
+      params = {
+        'user[email]': email,
+        'user[password]': password,
+        'user[password_confirmation]': password,
+        authenticity_token: auth_token(response.body)
       }
 
-      response = Net::HTTP.post URI(submitting_uri),
-            URI.encode_www_form(request_body),
-               "Content-Type" => "application/x-www-form-urlencoded",
-               "Cookie" => cookie
+      request = Net::HTTP::Post.new URI.join(hostname, reg_action_path)
+      request.body = URI.encode_www_form(params)
+      request['Cookie'] = cookie
 
-      if response.code == '302'
-        print "Registration is complete"
-      else
-        print "Unexpected error"
-      end
-      response.code
-    # END
+      response = http.request request
+
+      response.code == '302'
     end
+
+    private
+
+    def auth_token(body)
+      html = Nokogiri::HTML(body)
+
+      html.at('input[@name="authenticity_token"]')['value']
+    end
+    # END
   end
 end
