@@ -6,10 +6,9 @@
 .p-3.bg-light
   / BEGIN
   = search_form_for @q do |f|
-  = f.label :title_cont
-  = f.search_field :title_cont
-  = f.input :aasm_state_in , as: :select, collection: Post.aasm.states.map(&:name)
-  = f.submit
+    = f.input :title_cont
+    = f.input :aasm_state_eq , as: :select, collection: Post.aasm.states.map(&:name)
+    = f.submit
   / END
 
 table.table.table-striped.table-hover.mb-5
