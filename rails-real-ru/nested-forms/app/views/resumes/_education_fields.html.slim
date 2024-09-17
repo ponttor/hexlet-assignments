@@ -1,0 +1,13 @@
+.nested-fields
+  .row
+    .col
+      = f.input :institution, label: 'Institution'
+    .col
+      = f.input :faculty, label: 'Faculty'
+  .row
+    .col
+      = f.input :begin_date, as: :date, include_blank: true, start_year: 1970, label: 'Begin Date'
+    .col
+      = f.input :end_date, as: :date, include_blank: true, start_year: 1970, label: 'End Date'
+  .mb-3
+    = link_to_remove_association 'Remove education', f, class: 'btn btn-danger'
