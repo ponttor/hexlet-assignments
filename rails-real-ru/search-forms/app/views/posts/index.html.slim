@@ -6,9 +6,14 @@
 .p-3.bg-light
   / BEGIN
   = search_form_for @q do |f|
-    = f.input :title_cont
-    = f.input :aasm_state_eq , as: :select, collection: Post.aasm.states.map(&:name)
-    = f.submit
+    .row.my-2
+      .col-5
+        = f.input :title_cont, label: false
+      .col-4
+        = f.input :aasm_state_eq, as: :select, collection: Post.aasm.states.map(&:name), label: false
+      .col-3
+        = f.submit 'Search', class: 'btn btn-primary me-2'
+        = link_to 'Reset', url_for, class: 'btn btn-outline-primary'
   / END
 
 table.table.table-striped.table-hover.mb-5
