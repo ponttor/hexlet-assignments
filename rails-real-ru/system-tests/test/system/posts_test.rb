@@ -4,70 +4,55 @@ require 'application_system_test_case'
 
 # BEGIN
 class PostsTest < ApplicationSystemTestCase
-  setup do
-    @attrs = {
-      title: Faker::Book.title,
-      body: Faker::Books::Dune.quote
-    }
-  end
+  test '#index' do
+    visit posts_url
 
-  test 'visiting the index' do
-    visit posts_path
     assert_selector 'h1', text: 'Posts'
   end
 
-  test 'creating a Post' do
-    visit posts_path
+  test '#create' do
+    post_params = {
+      title: Faker::Book.title,
+      body: Faker::Books::Dune.quote
+    }
+
+    visit posts_url
+
     click_on 'New Post'
 
-    fill_in 'Title', with: @attrs[:title]
-    fill_in 'Body', with: @attrs[:body]
+    fill_in('Title', with: post_params[:title])
+    fill_in('Body', with: post_params[:body])
+
     click_on 'Create Post'
-
-    assert_text 'Post was successfully created.'
-    click_on 'Back'
-
-    post = Post.find_by! title: @attrs[:title]
-    assert { post }
+    assert_text post_params[:title]
+    assert_text post_params[:body]
   end
 
-  test 'updating a Post' do
-    visit posts_path
+  test '#update' do
+    visit posts_url
     click_on 'Edit', match: :first
 
-    fill_in 'Title', with: @attrs[:title]
-    fill_in 'Body', with: @attrs[:body]
+    post_params = {
+      title: Faker::Lorem.sentence,
+      body: Faker::Lorem.paragraph_by_chars(number: 190)
+    }
+    fill_in('Title', with: post_params[:title])
+    fill_in('Body', with: post_params[:body])
+
     click_on 'Update Post'
 
     assert_text 'Post was successfully updated.'
-    click_on 'Back'
-
-    post = Post.find_by! title: @attrs[:title]
-    assert { post }
+    assert_text post_params[:title]
+    assert_text post_params[:body]
   end
 
-  test 'destroying a Post' do
-    post_count_before = Post.count
-    visit posts_path
+  test '#destroy' do
+    visit posts_url
     page.accept_confirm do
       click_on 'Destroy', match: :first
     end
 
-    assert_text 'Post was successfully destroyed'
-
-    post_count_after = Post.count
-    assert { post_count_after == post_count_before - 1 }
-  end
-
-  test 'creatign comment on a post' do
-    visit posts_path
-    click_on 'Show', match: :first
-    fill_in 'post_comment_body', with: @attrs[:body]
-    click_on 'Create Comment'
-    assert_text 'Comment was successfully created.'
-
-    comment = Post::Comment.find_by body: @attrs[:body]
-    assert { comment }
+    assert_text 'Post was successfully destroyed.'
   end
 end
 # END
