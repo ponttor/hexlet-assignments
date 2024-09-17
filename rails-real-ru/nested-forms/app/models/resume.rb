@@ -5,10 +5,15 @@ class Resume < ApplicationRecord
   validates :contact, presence: true
 
   # BEGIN
-  has_many :educations, dependent: :destroy, class_name: 'ResumeEducation'
-  has_many :works, dependent: :destroy, class_name: 'ResumeWork'
+  has_many :educations, class_name: 'ResumeEducation',
+                        inverse_of: :resume,
+                        dependent: :destroy
 
-  accepts_nested_attributes_for :educations, allow_destroy: true
-  accepts_nested_attributes_for :works, allow_destroy: true
+  has_many :works, class_name: 'ResumeWork',
+                   inverse_of: :resume,
+                   dependent: :destroy
+
+  accepts_nested_attributes_for :educations, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :works, reject_if: :all_blank, allow_destroy: true
   # END
 end
