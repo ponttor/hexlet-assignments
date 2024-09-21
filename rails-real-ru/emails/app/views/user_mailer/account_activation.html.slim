@@ -1,3 +1,5 @@
-h1 Hello, #{@user.name}!
-p Welcome to our test site. To complete registration follow the link below
-a href="http://hexlet.test/user/confirm?confirmation_token=el4tluqCGOiQrD_kRvwsIw" Complete registration
+h1 = t('.congratulation', user_name: @user.name)
+
+p = t('.welcome_text')
+
+= link_to t('.confirm'), confirm_user_url(confirmation_token: @user.confirmation_token)

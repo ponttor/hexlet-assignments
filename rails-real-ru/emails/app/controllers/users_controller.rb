@@ -16,9 +16,7 @@ class UsersController < ApplicationController
 
     if @user.save
       # BEGIN
-      # UserMailer.with(
-      #   user: @user
-      # ).account_activation.deliver_now
+      UserMailer.with(user: @user).account_activation.deliver_later
       # END
 
       sign_in @user

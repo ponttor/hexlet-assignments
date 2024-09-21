@@ -8,10 +8,8 @@ class UserMailer < ApplicationMailer
   #
   def account_activation
     # BEGIN
-    pp '********************************'
-
     @user = params[:user]
-    pp @user
+
     mail(to: @user.mail)
     # END
   end
