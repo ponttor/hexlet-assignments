@@ -18,7 +18,6 @@ class MyTest < Minitest::Test
   end
 end
 
-
 class MyTest < Minitest::Test
   def test_one
     assert true
@@ -44,7 +43,7 @@ end
 
 ### Assertions
 
-describe "Assertions" do
+describe 'Assertions' do
   it 'should be true' do
     var = true
     assert var
@@ -71,7 +70,7 @@ describe "Assertions" do
   end
 
   it 'matches regexp' do
-    assert_match(/\w+/, "some string")
+    assert_match(/\w+/, 'some string')
   end
 
   it 'should include value' do
@@ -89,13 +88,13 @@ describe "Assertions" do
   end
 
   it 'should be descendant of Enumerable' do
-    assert_kind_of Enumerable, Array.new
+    assert_kind_of Enumerable, []
     assert_kind_of Enumerable, Range.new(0, 10)
-    assert_kind_of Enumerable, Hash.new
+    assert_kind_of Enumerable, {}
   end
 
   it 'should be descendant of Enumerable' do
-    [Array.new, Range.new(0, 10), Hash.new].each do |instance|
+    [[], Range.new(0, 10), {}].each do |instance|
       assert_kind_of Enumerable, instance
     end
   end
@@ -103,7 +102,7 @@ end
 
 ### Expectation
 
-describe "Expection" do
+describe 'Expection' do
   it 'should be true' do
     var = true
     _(var).must_equal true
@@ -130,7 +129,7 @@ describe "Expection" do
   end
 
   it 'matches regexp' do
-    _("some string").must_match(/\w+/)
+    _('some string').must_match(/\w+/)
   end
 
   it 'should include value' do
@@ -147,7 +146,7 @@ describe "Expection" do
   end
 
   it 'should not be descendant of Comparable' do
-    [Array.new, Range.new(0, 10), Hash.new].each do |instance|
+    [[], Range.new(0, 10), {}].each do |instance|
       _(instance).wont_be_kind_of(Comparable)
     end
   end
@@ -156,7 +155,6 @@ end
 # ### Хуки
 
 class MyTest < Minitest::Test
-
   def before_setup
     puts 'a'
   end
@@ -186,7 +184,7 @@ class MyTest < Minitest::Test
   end
 end
 
-describe "My Test" do
+describe 'My Test' do
   before do
     puts '1'
   end
