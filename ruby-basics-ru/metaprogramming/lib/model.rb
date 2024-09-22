@@ -1,60 +1,59 @@
 # frozen_string_literal: true
 
 # BEGIN
+require 'date'
+
 module Model
-  def self.included(base)
-    base.extend(ClassMethods)
-  end
-
-  def convert(type, value)
-    return nil if value.nil?
-
-    case type
-    when :integer
-      value.to_i
-    when :string
-      value.to_s
-    when :datetime
-      DateTime.parse(value)
-    when :boolean
-      !!value
-    else
-      value
+  def initialize(attrs = {})
+    @attributes = {}
+    self.class.attribute_options.each do |name, options|
+      value = attrs.key?(name) ? attrs[name] : options.fetch(:default, nil)
+      write_attribute(name, value)
     end
   end
 
-  def initialize(attributes = {})
-    @store = self.class.instance_variable_get :@store
-    @initial_state = self.class.instance_variable_get :@initial_state
-    initialization(@initial_state.merge(attributes), @store)
-  end
-
-  def initialization(data, scheme)
-    data.each do |k, v|
-      public_send "#{k}=", v if scheme.key? k
-    end
-  end
-
-  def attributes
-    @store.keys.each_with_object({}) { |cur, acc| acc[cur] = public_send(cur); acc }
+  def write_attribute(name, value)
+    options = self.class.attribute_options[name]
+    @attributes[name] = self.class.convert(value, options[:type])
   end
 
   module ClassMethods
-    def attribute(name, options)
-      @store ||= {}
-      @initial_state ||= {}
-      @store[name] = options
-      @initial_state[name] = options[:default] unless options[:default].nil?
+    def attribute_options
+      @attribute_options || {}
+    end
 
-      define_method name do
-        instance_variable_get "@#{name}"
+    def attribute(name, options = {})
+      @attribute_options ||= {}
+      attribute_options[name] = options
+
+      define_method :"#{name}" do
+        @attributes[name]
       end
 
-      define_method "#{name}=" do |value|
-        reduced_type = convert options[:type], value
-        instance_variable_set "@#{name}", reduced_type
+      define_method :"#{name}=" do |value|
+        write_attribute(name, value)
       end
     end
+
+    def convert(value, target_type)
+      return value if value.nil?
+
+      case target_type
+      when :datetime
+        DateTime.parse value
+      when :integer
+        Integer value
+      when :string
+        String value
+      when :boolean
+        !!value
+      end
+    end
+  end
+
+  def self.included(base)
+    base.attr_reader :attributes
+    base.extend ClassMethods
   end
 end
 # END
