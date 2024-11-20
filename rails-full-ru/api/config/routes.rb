@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   # BEGIN
   namespace :api do
-    resources :users, only: %i[index show]
+    resources :users, only: [:index, :show]
   end
   # END
 
