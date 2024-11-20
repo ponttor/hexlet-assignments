@@ -3,15 +3,15 @@
 class Api::UsersController < Api::ApplicationController
   # BEGIN
   def index
-    @users = User.all
+    users = User.all
 
-    respond_with @users
+    respond_with users
   end
-  
-  def show
-    @user = User.find(params[:id])
 
-    respond_with @user
+  def show
+    user = User.find params[:id]
+
+    respond_with user
   end
   # END
 end
