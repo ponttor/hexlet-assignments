@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # BEGIN
-
+require 'octokit'
 # END
 
 class Web::RepositoriesController < Web::ApplicationController
@@ -19,21 +19,30 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def create
     # BEGIN
-    client = Octokit::Client.new(:access_token => "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")
-    repo = Octokit.repo params[:repository][:link]
-    
-    repository = Repository.create(
-      owner_name: repo.owner.login,
-      default_branch: repo.default_branch,
-      description: repo.description,
-      repo_name: repo.name,
-      link: params[:repository][:link],
-      watchers_count: repo.watchers,
-      language: repo.language,
-      repo_created_at: repo.created_at,
-      repo_updated_at: repo.updated_at
-    )
-    redirect_to repository
+    @repository = Repository.new(permitted_params)
+
+    if @repository.save
+      client = Octokit::Client.new
+
+      octokit_repo = Octokit::Repository.from_url(@repository.link)
+
+      github_data = client.repository(octokit_repo)
+
+      @repository.update!(
+        repo_name: github_data[:name],
+        owner_name: github_data[:owner][:login],
+        description: github_data[:description],
+        default_branch: github_data[:default_branch],
+        watchers_count: github_data[:watchers_count],
+        language: github_data[:language],
+        repo_created_at: github_data[:created_at],
+        repo_updated_at: github_data[:updated_at]
+      )
+      redirect_to @repository, notice: t('success')
+    else
+      flash[:notice] = t('fail')
+      render :new, status: :unprocessable_entity
+    end
     # END
   end
 

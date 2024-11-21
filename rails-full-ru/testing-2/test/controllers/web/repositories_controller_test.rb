@@ -4,23 +4,63 @@ require 'test_helper'
 
 class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   # BEGIN
+  setup do
+    @repo = repositories :one
 
-  def stub_api(link)
-    response = File.new('test/fixtures/files/response.json')
-    stub_request(:get, "https://api.github.com/repos/#{link}").
-    to_return(body: response, status: 200)
+    @attrs = {
+      link: 'https://github.com/railsware/js-routes'
+    }
   end
-  
-  test 'should_create' do
-    stub_api('AlfieJones/theme-toggles')
-    repository = repositories(:one)
 
-    assert { repository.id == Repository.last.id }
-    assert { repository.link == Repository.last.link }
-    assert { repository.description == Repository.last.description }
-    assert { repository.default_branch == Repository.last.default_branch }
-    assert { repository.watchers_count == Repository.last.watchers_count }
-    assert { repository.language == Repository.last.language }
+  test 'get index' do
+    get repositories_url
+    assert_response :success
+  end
+
+  test 'get new' do
+    get new_repository_url
+    assert_response :success
+  end
+
+  test 'should create' do
+    response = load_fixture('files/response.json')
+
+    stub_request(:get, 'https://api.github.com/repos/railsware/js-routes')
+      .to_return(
+        status: 200,
+        body: response,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+
+    post repositories_url, params: { repository: @attrs }
+
+    repository = Repository.find_by @attrs
+
+    assert { repository }
+    assert { repository.description.present? }
+    assert_redirected_to repository_url(repository)
+  end
+
+  test 'get edit' do
+    get edit_repository_url(@repo)
+    assert_response :success
+  end
+
+  test 'should update' do
+    patch repository_url(@repo), params: { repository: @attrs }
+
+    @repo.reload
+
+    assert { @repo.link == @attrs[:link] }
+    assert_redirected_to repositories_url
+  end
+
+  test 'destroy' do
+    delete repository_url(@repo)
+
+    assert { !Repository.exists? @repo.id }
+
+    assert_redirected_to repositories_url
   end
   # END
 end
