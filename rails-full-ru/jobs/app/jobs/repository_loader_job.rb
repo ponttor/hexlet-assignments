@@ -1,28 +1,33 @@
 # frozen_string_literal: true
 
+require 'octokit'
+
 class RepositoryLoaderJob < ApplicationJob
   queue_as :default
 
   def perform(repository_id)
-    repository = Repository.find(repository_id)
+    repository = Repository.find repository_id
+
+    repository.fetch!
+
     client = Octokit::Client.new
-    repository.start_fetch! if repository.created?
-    repo_data = client.repo(extract_repo_name(repository.link))
 
-    repository.update(
-      repo_name: repo_data.name,
-      description: repo_data.description,
-      owner_name: repo_data.owner.login
+    github_repo = Octokit::Repository.from_url(repository.link)
+
+    github_data = client.repository(github_repo)
+
+    repository.update!(
+      repo_name: github_data[:name],
+      owner_name: github_data[:owner][:login],
+      description: github_data[:description],
+      default_branch: github_data[:default_branch],
+      watchers_count: github_data[:watchers_count],
+      language: github_data[:language],
+      repo_created_at: github_data[:created_at],
+      repo_updated_at: github_data[:updated_at]
     )
-    repository.complete_fetch! if repository.fetching?
-  rescue Octokit::NotFound
-    Rails.logger.error "Repository not found: #{repository.link}"
-    repository.update(state: 'failed')
-  end
-
-  private
-
-  def extract_repo_name(link)
-    URI.parse(link).path.delete_prefix('/')
+    repository.mark_as_fetched!
+  rescue StandardError
+    repository.mark_as_failed!
   end
 end
