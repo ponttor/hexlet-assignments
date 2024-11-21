@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RepositoryLoaderJob < ApplicationJob
   queue_as :default
 
@@ -9,7 +11,8 @@ class RepositoryLoaderJob < ApplicationJob
 
     repository.update(
       repo_name: repo_data.name,
-      description: repo_data.description
+      description: repo_data.description,
+      owner_name: repo_data.owner.login
     )
     repository.complete_fetch! if repository.fetching?
   rescue Octokit::NotFound

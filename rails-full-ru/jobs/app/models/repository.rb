@@ -4,14 +4,23 @@ class Repository < ApplicationRecord
   validates :link, presence: true, uniqueness: true
 
   # BEGIN
-  @repository = Repository.new(permitted_params)
+  include AASM
 
-  if @repository.save
-    RepositoryLoaderJob.perform_later(@repository.id)
-    redirect_to repository_path(@repository), notice: t('repositories.create.success')
-  else
-    flash.now[:alert] = t('repositories.create.fail')
-    render :new
+  aasm do
+    state :created, initial: true
+    state :fetching, :fetched, :failed
+
+    event :start_fetch do
+      transitions from: :created, to: :fetching
+    end
+
+    event :complete_fetch do
+      transitions from: :fetching, to: :fetched
+    end
+
+    event :fail do
+      transitions to: :failed
+    end
   end
   # END
 end
