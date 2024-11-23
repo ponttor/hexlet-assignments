@@ -6,14 +6,13 @@ class ExecutionTimer
   end
 
   def call(env)
-    # BEGIN
-    time_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    status, headers, body = @app.call(env)
-    time_finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    elapsed_microseconds = (time_finish - time_start) * 1_000_000
-    body << '</br>'
-    body << "Request execution time: #{elapsed_microseconds.to_i} us\n"
-    [status, headers, body]
-    # END
+    before = Time.now.to_f
+    status, headers, prev_body = @app.call(env)
+    after = Time.now.to_f
+    diff = (after - before) * 1_000_000
+    log_message = "App took #{diff.to_i} microseconds."
+    next_body = prev_body.push('</br>', log_message)
+
+    [status, headers, next_body]
   end
 end

@@ -5,8 +5,9 @@ require 'rack'
 class Router
   def call(env)
     # BEGIN
-    request = Rack::Request.new(env)
-    case request.path
+    req = Rack::Request.new(env)
+
+    case req.path_info
     when '/'
       [200, { 'Content-Type' => 'text/html' }, ['Hello, World!']]
     when '/about'
