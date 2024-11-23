@@ -1,31 +1,48 @@
-<%# https://guides.rubyonrails.org/form_helpers.html %>
-<%= form_with model: @task do |form| %>
-  <%= form.label :name %><br>
-  <%# Содержит массив с сообщениями ошибок %>
-  <%# https://apidock.com/rails/ActiveModel/Errors/full_messages_for %>
-  <%= @task.errors.full_messages_for(:name).join(' ') if @task.errors.present? %>
-  <%= form.text_field :name %><br>
+<%= form_with(model: task) do |form| %>
+  <% if task.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
 
-  <%= form.label :description %><br>
-  <%= form.text_area :description %><br>
+      <ul>
+        <% task.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-  <%= form.label :creator %><br>
-  <%= @task.errors.full_messages_for(:creator).join(' ') if @task.errors.present? %>
-  <%= form.text_field :creator %><br>
 
-  <%= form.label :performer %><br>
-  <%= form.text_field :performer %><br>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
 
-  <%= form.label :status %><br>
-  <%= @task.errors.full_messages_for(:status).join(' ') if @task.errors.present? %>
-  <%= form.text_field :status %><br>
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
 
-  <%= form.label :completed %><br>
-  <%= @task.errors.full_messages_for(:completed).join(' ') if @task.errors.present? %>
-  <%= form.check_box :completed %><br>
+  <div class="field">
+    <%= form.label :status %>
+    <%= form.text_field :status %>
+  </div>
 
-  <br>
-  <%= form.submit %>
+  <div class="field">
+    <%= form.label :creator %>
+    <%= form.text_field :creator %>
+  </div>
+
+  <div class="field">
+    <%= form.label :performer %>
+    <%= form.text_field :performer %>
+  </div>
+
+  <div class="field">
+    <%= form.label :completed %>
+    <%= form.check_box :completed %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
 <% end %>
-
-<%= @task.errors.full_messages if @task.errors.present? %>
