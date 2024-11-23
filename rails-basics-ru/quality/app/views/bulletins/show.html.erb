@@ -1,7 +1,18 @@
 <%# BEGIN %>
-<ul>
-  <li><%= @bulletin.title %></li>
-  <li><%= @bulletin.body %></li>
-  <li><%= @bulletin.published %></li>
-</ul>
+<p>
+  <strong>Title:</strong>
+  <%= @bulletin.title %>
+</p>
+
+<p>
+  <strong>Body:</strong>
+  <%= @bulletin.body %>
+</p>
+
+<p>
+  <strong>Published:</strong>
+  <%= @bulletin.published %>
+</p>
+
+<%= link_to 'Back', bulletins_path %>
 <%# END %>
