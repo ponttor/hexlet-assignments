@@ -1,0 +1,9 @@
+published:
+  title: Published bulletin
+  body: Published bulletin body
+  published: true
+
+unpublished:
+  title: Unpublished bulletin
+  body: Unpublished bulletin body 
+  published: false

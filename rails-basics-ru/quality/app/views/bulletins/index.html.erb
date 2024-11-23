@@ -1,0 +1,10 @@
+<h1>Bulletins</h1>
+<%# BEGIN %>
+  <ul>
+    <% @bulletins.each do |bulletin| %>
+      <li><%= bulletin.title %></li>
+      <li><%= bulletin.body %></li>
+      <li><%= bulletin.published %></li>
+    <% end %>
+  </ul>
+<%# END %>
