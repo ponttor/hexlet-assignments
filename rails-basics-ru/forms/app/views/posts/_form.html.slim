@@ -1,0 +1,9 @@
+= simple_form_for post do |f|
+  .form-inputs
+    = f.input :title, required: true, label: 'Title'
+    = f.input :body, as: :text, label: 'Body'
+    = f.input :summary, label: 'Summary'
+    = f.input :published, as: :boolean, label: 'Published'
+
+  .form-actions
+    = f.button :submit, 'Save Post'
