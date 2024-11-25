@@ -1,49 +1,47 @@
 # frozen_string_literal: true
 
-class CommentsController < Posts::ApplicationController
-  before_action :set_comment, only: %i[show edit update destroy]
-
-  def index
-    @comments = resource_post.comments
-  end
-
-  def show; end
-
-  def new
-    @comment = resource_post.comments.build
+class Posts::CommentsController < Posts::ApplicationController
+  def edit
+    @comment = resource_post.comments.find params[:id]
   end
 
   def create
-    @comment = resource_post.comments.build(comment_params)
+    @comment = PostComment.new(comment_params)
+    @comment.post = resource_post
+
     if @comment.save
-      redirect_to [resource_post, @comment], notice: 'Comment was successfully created.'
+      redirect_to resource_post, notice: 'Comment was successfully created.'
     else
-      render :new, status: :unprocessable_entity
+      @post = resource_post
+
+      flash[:alert] = 'Comment has not been added'
+      render 'posts/show', status: :unprocessable_entity
     end
   end
 
-  def edit; end
-
   def update
+    @comment = resource_post.comments.find params[:id]
+
     if @comment.update(comment_params)
-      redirect_to [resource_post, @comment], notice: 'Comment was successfully updated.'
+      redirect_to resource_post, notice: 'Comment was successfully updated.'
     else
+      flash[:alert] = 'Comment has not been updated'
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
+    @comment = PostComment.find params[:id]
+
     @comment.destroy
-    redirect_to post_comments_path(resource_post), notice: 'Comment was successfully deleted.'
+
+    redirect_to resource_post
   end
 
   private
 
-  def set_comment
-    @comment = resource_post.comments.find(params[:id])
-  end
-
+  # Only allow a list of trusted parameters through.
   def comment_params
-    params.require(:comment).permit(:content, :author)
+    params.require(:post_comment).permit(:body)
   end
 end
