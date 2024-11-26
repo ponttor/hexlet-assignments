@@ -3,16 +3,23 @@
 require 'csv'
 
 namespace :hexlet do
-  desc 'task to load a list of users from a CSV file'
-  task :import_users, [:csv_name] => :environment do |_t, args|
-    csv_name = args[:csv_name]
-    _, *arr_of_users = CSV.read(csv_name)
-    old_user_count = User.count
-    arr_of_users.each do |user_data|
-      first_name, last_name, birthday, email = user_data
-      User.create(first_name:, last_name:, birthday: Date.strptime(birthday, '%m/%d/%Y'), email:)
+  desc 'Hexlet tasks'
+
+  task :import_users, %i[data_path] => :environment do |_task, args|
+    path = args[:data_path]
+
+    abort 'Data path is required!' unless path
+    puts path
+    abort 'Cant find data file!' unless File.exist?(path)
+
+    data = File.read(path)
+
+    csv = CSV.parse(data, headers: true)
+    csv.each do |row|
+      parsed_birthday = DateTime.strptime(row['birthday'], '%m/%d/%Y')
+      User.create!(row.to_hash.merge(birthday: parsed_birthday))
     end
-    new_user_count = User.count
-    print "Added #{new_user_count - old_user_count} users from '#{csv_name}'\n"
+
+    puts 'Successfuly loaded!'
   end
 end
