@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   # BEGIN
-  mount RailsStats::Engine, at: '/stats'
+  mount RailsStats::Engine => '/stats'
   # END
 
   scope module: :web do

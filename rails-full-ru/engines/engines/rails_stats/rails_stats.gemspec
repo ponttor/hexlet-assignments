@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Hexlet']
   spec.email       = ['support@hexlet.io']
   spec.homepage    = 'https://hexlet.io'
-  spec.summary     = 'Rails stats engine'
-  spec.description = 'Rails stats engine'
+  spec.summary     = 'Hexlet homework Rails stats engine'
+  spec.description = 'Hexlet homework Rails stats engine'
   spec.license     = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
