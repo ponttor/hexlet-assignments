@@ -27,7 +27,7 @@ Rails.application.configure do
 
     config.cache_store = :memory_store
     # BEGIN
-    config.cache_store = :file_store, Rails.root.join('/tmp/cache/')
+    config.cache_store = :file_store, "#{root}/tmp/cache/"
     # END
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"

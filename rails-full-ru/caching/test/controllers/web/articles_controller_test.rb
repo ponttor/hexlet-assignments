@@ -8,18 +8,18 @@ module Web
       @article = articles(:one)
     end
 
-    # test 'should get index' do
-    #   get articles_url
+    test 'should get index' do
+      get articles_url
 
-    #   assert_response :success
-    #   assert_match @article.title, response.body
-    # end
+      assert_response :success
+      assert_match @article.title, response.body
+    end
 
-    # test 'should get show' do
-    #   get article_url(@article)
+    test 'should get show' do
+      get article_url(@article)
 
-    #   assert_response :success
-    #   assert_match @article.title, response.body
-    # end
+      assert_response :success
+      assert_match @article.title, response.body
+    end
   end
 end
